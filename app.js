@@ -96,10 +96,11 @@ const sessionOptions = {
 
 
 
-// // send response on server
-// app.get("/", (req, res) => {
-//   res.send("hiii, i am root");
-// });
+// send response on server
+app.get("/", (req, res) => {
+  res.redirect("/listings");
+  
+});
 
 app.use(session(sessionOptions));
 app.use(flash());
@@ -112,44 +113,19 @@ passport.deserializeUser(User.deserializeUser());
 passport.serializeUser(User.serializeUser());
 
 
-
 app.use((req, res, next)=>{
   res.locals.success=req.flash("success");
   res.locals.error=req.flash("error");
   res.locals.currUser=req.user;
-  console.log(req.user)
-
   next();
 
 });
-
-// app.get("/demouser",async(req,res)=>{
-//   let fakeUser= new User({
-//     email:"student@gmail.com",
-//     username: "delta-student"
-//   });
-//   let registeredUser= await User.register(fakeUser, "helloworld");
-//   res.send(registeredUser);
-// });
 
 
 app.use("/listings", listingsRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 
 app.use("/",userRouter);
-
-
-// const validateReview = (req, res, next) => {
-//   let { error } = reviewSchema.validate(req.body);
-
-//   if (error) {
-//     // extract detail of err
-//     let errMsg = error.details.map((el) => el.message).join(",");
-//     throw new ExpressError(400, errMsg);
-//   } else {
-//     next();
-//   }
-// };
 
 
 // READ (show route of particular listing )
@@ -160,23 +136,6 @@ app.get("/listings/:id", async (req, res) => {
 });
 
 
-// //updated route
-// app.put("/:id", validateListing, wrapAsync(async(req,res)=>{
-//   let {id}= req.params;
-//   await Listing.findByIdAndUpdate(id,{...req.body.listing});
-//   req.flash("success", " New Review Created :");
-// res.redirect(`/listings/${id}`);
-// }));
-
-
-
-
-// standard error response for all if path not found
-// app.all("*",(req,res,next)=>{
-//     next(new ExpressError(404," page Not Found !"));
-
-// });
-
 app.get("/admin", (req, res) => {
   throw new ExpressError(403, "access is forbidden");
 });
@@ -186,9 +145,7 @@ app.use((err, req, res, next) => {
 
   let { statusCode = 500, message = "something went wrong!" } = err;
   console.log(err)
-  // res.send(err)
-  // res.status(statusCode).send(err);
-  //res.status(status).render("error.ejs",{message});
+  
 });
 
 // create server
